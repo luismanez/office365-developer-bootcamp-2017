@@ -16,15 +16,20 @@ Una vez obtenido el 'sentiment', nuestro spfx Field Customiser, lo mostrará uti
 
 ### Configurar Tenant Office 365 como 'First release'
 Durante el lab queremos utilizar una de las ultimas novedades de Office 365: "Tenant Properties". Para tener esta 'feature' disponible, debemos de configurar nuestra tenant como 'First release', para ello, debemos ir a la seccion 'Admin' dentro de [http://portal.office.com](http://portal.office.com)
-TODO: completar con pantallazos...
+
+![admin center](./assets/admin-center.png)
 
 ### Configurar entorno de desarrollo spfx
 Si no lo has hecho ya, antes de empezar a desarrollar con SharePoint framework, tienes que configurar el entorno, para ello sigue los pasos de este link:
-TODO: Configurar entorno desarrollo spfx
+[https://docs.microsoft.com/en-us/sharepoint/dev/spfx/set-up-your-development-environment](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/set-up-your-development-environment)
 
 ### Registrar servicio Cognitive Services Text Analytics
 Para poder utilizar la Text Analytics API de Cognitive Services, primero tenemos que registar el servicio desde el portal de Azure, para asi obtener la Key para invocar la API. 
-TODO: pantallazos
+
+![Cognitive Services](./assets/create-text-api.png)
+
+![api key](./assets/api-key.png)
+
 
 ### Almacenar la Text Analytics API como Tenant Property
 Para evitar hard-coded la Key de la API en nuestro codigo, se propone almacenarla como una Tenant Property, y recuperarla utilizando la API que SharePoint ofrece a tal efecto. Para ello, primero de todo debemos asegurarnos que tenemos la ultima verion de los comandos de PowerShell para SharePoint Online, que puede descargar de la siguiente direccion: TODO: link
@@ -51,7 +56,10 @@ Get-SPOStorageEntity -Site "https://YOUR_TENANT.sharepoint.com/sites/appcatalog"
 
 ### Crear Lista de SharePoint para probar nuestro proyecto
 __Nota:__ Si no dispones de un sitio _Modern_ ya creado en tu tenant, primero deberas crear un sitio _Modern_, para ello puedes hacerlo desde la opcion _SharePoint_
-TODO: pantallazos
+
+![create site button](./assets/create-site.png)
+
+![create team site](./assets/create-team-site.png)
 
 Una vez en nuestro sitio _Modern_ debemos crear una nueva Lista de SharePoint. Una vez creada la lista, agregaremos dos nuevos campos:
 * Comment: Multiple lines
@@ -60,7 +68,8 @@ Una vez en nuestro sitio _Modern_ debemos crear una nueva Lista de SharePoint. U
 
 ### Crear un proyecto spfx extension Field Customiser
 Este paso es opcional, ya que para el Lab se proporciona un proyecto ya creado con la estructura base, sin embargo, se recomienda crear un proyecto de cero desde la template de _Yeoman_ para ver el proceso completo, asi como completar el proceso de Debug y prueba desde localhost.
-TODO: pantallazos del proceso
+
+![yo extensions](./assets/yo-extensions.png)
 
 Una vez creado el proyecto desde la plantilla de _yeoman_, podemos probarlo desde localhost. Para ello:
 
