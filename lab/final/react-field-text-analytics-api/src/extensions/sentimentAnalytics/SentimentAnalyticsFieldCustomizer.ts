@@ -40,13 +40,15 @@ export default class SentimentAnalyticsFieldCustomizer
   public onRenderCell(event: IFieldCustomizerCellEventParameters): void {
     
     const id = event.listItem.getValueByName('ID');
-    const title: string = event.listItem.getValueByName('Title');    
+    const title: string = event.listItem.getValueByName('Comment');    
 
     const sentimentAnalytics: React.ReactElement<{}> =
       React.createElement(SentimentAnalytics, { 
         id: id, 
         text: title, 
-        httpClient: this.context.httpClient 
+        httpClient: this.context.httpClient,
+        spHttpClient: this.context.spHttpClient,
+        absoluteUrl: this.context.pageContext.web.absoluteUrl 
       } as ISentimentAnalyticsProps);
 
     ReactDOM.render(sentimentAnalytics, event.domElement);

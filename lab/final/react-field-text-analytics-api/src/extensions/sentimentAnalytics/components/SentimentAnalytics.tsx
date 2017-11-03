@@ -1,6 +1,6 @@
 import { Log, Guid } from '@microsoft/sp-core-library';
 import { override } from '@microsoft/decorators';
-import { IHttpClientOptions, HttpClientResponse, HttpClient } from '@microsoft/sp-http';
+import { IHttpClientOptions, HttpClientResponse, HttpClient, SPHttpClientResponse, SPHttpClient } from '@microsoft/sp-http';
 import * as React from 'react';
 
 import styles from './SentimentAnalytics.module.scss';
@@ -10,6 +10,8 @@ import SentimentIcon from './SentimentIcon';
 export interface ISentimentAnalyticsProps {
   text: string;
   httpClient: HttpClient;
+  spHttpClient: SPHttpClient;
+  absoluteUrl: string;
 }
 
 export interface ISentimentAnalyticsState {
@@ -35,6 +37,7 @@ export default class SentimentAnalytics extends React.Component<ISentimentAnalyt
   public componentDidMount(): void {
     Log.info(LOG_SOURCE, 'React Element: SentimentAnalytics mounted');
     const documentId = Guid.newGuid().toString();
+
     this._getSentiment(this.props.text, 'en', documentId)
       .then(score => {
         this.setState({ score: score });
@@ -59,15 +62,24 @@ export default class SentimentAnalytics extends React.Component<ISentimentAnalyt
   }
 
   private async _getSentiment(text: string, language: string, id: string): Promise<number> {
-    const httpOptions: IHttpClientOptions = this._prepareHttpOptionsForVisionApi(text, language, id);
-    const cognitiveResponse: HttpClientResponse = await this.props.httpClient.post(this.cognitiveServicesTextUrl, HttpClient.configurations.v1, httpOptions);
-    const cognitiveResponseJSON: any = await cognitiveResponse.json();
 
-    const score = cognitiveResponseJSON.documents[0].score;
+    if (this.cognitiveServicesKey === '') {
+      const response: SPHttpClientResponse = await this.props.spHttpClient.get(`${this.props.absoluteUrl}/_api/web/GetStorageEntity('TextAPIKey')`, SPHttpClient.configurations.v1);
+      const responseJson: any = await response.json();
+      this.cognitiveServicesKey = responseJson.Value;
 
-    console.log(score);
-        
-    return score;
+      const httpOptions: IHttpClientOptions = this._prepareHttpOptionsForVisionApi(text, language, id);
+      const cognitiveResponse: HttpClientResponse = await this.props.httpClient.post(this.cognitiveServicesTextUrl, HttpClient.configurations.v1, httpOptions);
+      const cognitiveResponseJSON: any = await cognitiveResponse.json();
+  
+      const score = cognitiveResponseJSON.documents[0].score;
+  
+      console.log(score);
+          
+      return score;
+    }    
+
+    return 0;
   }
 
   private _prepareHttpOptionsForVisionApi(text: string, language: string, id: string): IHttpClientOptions {
