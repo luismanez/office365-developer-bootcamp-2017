@@ -30,7 +30,6 @@ Para poder utilizar la Text Analytics API de Cognitive Services, primero tenemos
 
 ![api key](./assets/api-key.png)
 
-
 ### Almacenar la Text Analytics API como Tenant Property
 Para evitar hard-coded la Key de la API en nuestro codigo, se propone almacenarla como una Tenant Property, y recuperarla utilizando la API que SharePoint ofrece a tal efecto. Para ello, primero de todo debemos asegurarnos que tenemos la ultima verion de los comandos de PowerShell para SharePoint Online, que puede descargar de la siguiente direccion: TODO: link
 
@@ -105,5 +104,31 @@ Abre el fichero _SentimentAnalyticsFieldCustomizer.ts_ y completa los comentario
 * Linea 42: Obtener el ID y Comment del Field: _event.listItem.getValueByName('ID')_ para el Comment el field se llama 'Comment'
 * Linea 46: Pasar el _id_, _title_ y las propiedades del contexto (_this.context_): _httpClient_, _spHttpClient_, _absoluteUrl_ al componente de React
 
+#### SentimentAnalytics.tsx
+Este es el componente React principal (lo que en React se denomina un _Smart Component_), que se encarga de hacer la llamada a la API de SharePoint Tenant Properties para obtener la Key de la Text API, y luego al servicio de Text Analytics API para obtener la puntuacion de _sentiment_
 
-### Create List with "Comment" (Multi-line) and "Sentiment" (Single Line) fields
+Abre el fichero SentimentAnalytics.ts_ y completa los comentarios marcados con _TODO_
+
+* Linea27: Desde el portal de Azure, obtén la URL para invocar la Text API. Tambien la puedes obtener del siguiente enlace [https://westus.dev.cognitive.microsoft.com/docs/services/TextAnalytics.V2.0/operations/56f30ceeeda5650db055a3c7](https://westus.dev.cognitive.microsoft.com/docs/services/TextAnalytics.V2.0/operations/56f30ceeeda5650db055a3c7)
+* Linea 33: establece el state del componente para que el score inicial sea 0
+* Linea 60: Usa el componente SentimentIcon, pasandole el score del state
+* Linea 69: usando async/await, haz una llamada a la API de SharePoint para sacar la Tenant Property TextAPIKey para ello, tendrás que componer una URL usando la props 'absoluteUrl' + endpoint, y el spHttpClient para la llamada a la API el endpoint para sacar la Key es: /_api/web/GetStorageEntity('TextAPIKey') el método Get necesita como segundo argumento un objeto ISPHttpClientConfigurations. La propiedad estática SPHttpClient.configurations.v1 te lo dará
+* Linea 74: obtiene el json de 'SPHttpClientResponse'
+* Linea 80: de nuevo con async/await y usando el httpClient de las props del component, haz un POST al Endpoint de la Text API (tienes una propiedad privada de la clase con ese valor) para el post, necesitarás un segundo argumento del tipo IHttpClientConfigurations: HttpClient.configurations.v1, y como tercer argumento, el objeto httpOptions de la linea anterior
+* Linea 85: obtiene el json de 'HttpClientResponse'
+* Linea 98 siguiendo el ejemplo de aquí:  https://westus.dev.cognitive.microsoft.com/docs/services/TextAnalytics.V2.0/operations/56f30ceeeda5650db055a3c9 crea un objeto documents con language, id, text
+* Linea 120: añade otro Header 'Ocp-Apim-Subscription-Key' y asígnale el valor de la TextAPI Key, que ya almacenaste en una variable privada
+
+#### Ejecuta la extension desde Localhost
+Lanza:
+```ps
+gulp serve --nobrowser
+```
+
+Desde la Lista de SP creada en un paso anterior, agrega la siguiente _query string_ para ejecutar la extension desde localhost:
+
+```ps
+?loadSPFX=true&debugManifestsFile=https://localhost:4321/temp/manifests.js&fieldCustomizers={"Sentiment":{"id":"537f4524-0444-46dd-b71b-3e9298e19338","properties":{"sampleText":"Hello!"}}}
+```
+      
+            
