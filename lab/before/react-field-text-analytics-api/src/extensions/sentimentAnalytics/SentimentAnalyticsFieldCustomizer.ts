@@ -39,7 +39,7 @@ export default class SentimentAnalyticsFieldCustomizer
   @override
   public onRenderCell(event: IFieldCustomizerCellEventParameters): void {
     
-    //TODO: Obtener el ID y Title del Field: event.listItem.getValueByName('ID') //para el título el field se llama 'Title'
+    //TODO: Obtener el ID y Comment del Field: event.listItem.getValueByName('ID') //para el Comment el field se llama 'Comment'
     const id = '';
     const title: string = '';    
 
